@@ -264,7 +264,7 @@ app.post('/command', function(req, res) {
           return res.send("That track must have been tight. Turn up and jam it!");
         }
       });
-    } else if (cmd === "youtube") {
+    } else if (cmd === "link") {
       var request = req.body.text;
       var space = request.indexOf(' ');
       var video = null;
