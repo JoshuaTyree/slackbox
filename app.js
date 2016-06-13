@@ -264,7 +264,7 @@ app.post('/command', function(req, res) {
           return res.send("That track must have been tight. Turn up and jam it!");
         }
       });
-    } else if (cmd === "link") {
+    } else if (cmd === "youtube") {
       var request = req.body.text;
       var space = request.indexOf(' ');
       var video = null;
@@ -286,9 +286,9 @@ app.post('/command', function(req, res) {
           return res.send("Good choice, I'm playing that for you now.");
         }
       });
-    } else if (cmd === "stoplink") {
+    } else if (cmd === "stopyoutube") {
       var script = 'tell application "Google Chrome"\n';
-      script += '\tset windows to every tab of every window whose URL is equal to "https://www.youtube.com/watch?v=47dtFZ8CFo8"\n';
+      script += '\tset windows to every tab of every window whose URL starts with "https://www.youtube.com"\n';
 	    script += '\trepeat with tabs in windows\n';
 		  script += '\t\tset tabs to tabs as any \n';
 		  script += '\t\trepeat with tabItr in tabs\n';
