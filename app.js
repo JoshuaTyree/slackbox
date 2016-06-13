@@ -95,71 +95,6 @@ app.use('/command', function(req, res, next) {
 });
 
 
-var HandlePlaylistCommand = function(req, res) {
-
-};
-
-var HandlePlayCommand = function(req, res) {
-  var request = req.body.text;
-  var space = request.indexOf(' ');
-  var track = null;
-
-  if (space != -1) {
-    track = request.substring(space + 1, request.length);
-    console.log("Searching Spotify for track: " + track);
-  } else {
-    var script = 'tell application "Spotify"\n\tplay\nend tell';
-    applescript.execString(script, function(error, ret) {
-      if (error) {
-        console.log("Encountered an error while attempting to run command");
-        console.log(error);
-        return res.send("I had a problem resuming playback on Spoity, you should tell my creator to check the logs for errors.");
-      } else {
-        return res.send("Resumed playback successfully. Enjoy!");
-      }
-    });
-  }
-
-  var pieces = track.split('-');
-  var track = pieces[pieces.length - 1];
-  var artist = null;
-  if (pieces.length > 1)
-    artist = pieces[0];
-
-  var query = "track:" + track.trim();
-  if (artist)
-    query = "artist:" + artist.trim() + " " + query;
-
-  console.log(query);
-  spotifyApi.searchTracks(query).then(function(data) {
-    var results  = data.body.tracks.items;
-    if (results.length === 0) {
-      return res.send("I couldn't file that track. You must have some weird taste in music... No judgement though! Just kidding, judgement.");
-    }
-
-    var track = results[0];
-    var trackId = track.id;
-    var trackName = track.name;
-    var artist = track.artists[0].name;
-    console.log("Found track: %s by %s", trackName, artist);
-    var script = 'tell application "Spotify"\n\tplay track "spotify:track:' + trackId + '"\nend tell';
-
-    applescript.execString(script, function(error, rtn) {
-      if (error) {
-        return res.send("I had a problem playing that track. You should check what happened in the system logs or tell someone who knows how to.");
-        console.log(error);
-      } else {
-        return res.send("Awesome selection! Playing: " + trackName + " by " + artist);
-      }
-    });
-  }, function(error) {
-    console.log("Spotify search error: ");
-    console.log(error);
-    return res.send("I encountered a problem while searching for that track. Tell my creator to check the logs.");
-  });
-};
-
-
 app.post('/command', function(req, res) {
   console.log("");
   console.log("==== Starting new request ====");
@@ -231,6 +166,37 @@ app.post('/command', function(req, res) {
         console.log(error);
         return res.send("I encountered a problem while searching for that track. Tell my creator to check the logs.");
       });
+    } else if (cmd === "play-uri") {
+      var request = req.body.text;
+      var space = request.indexOf(' ');
+      var uri = null;
+      var context = null;
+
+      if (space != -1) {
+        uri = request.substring(space + 1, request.length);
+      } else {
+        return res.send("You need to specify a URI to play.");
+      }
+      var script = 'tell application "Spotify"\n';
+      var pieces = uri.split('|');
+      if (pieces.length > 1) {
+        uri = pieces[0].trim();
+        context = pieces[1].trim();
+        script += '\tplay track "' + uri + '" in context "' + context + '"\n';
+      } else {
+        script += '\tplay track "' + uri + '"\n';
+      }
+      script += 'end tell';
+      console.log(script);
+
+      applescript.execString(script, function(error, ret) {
+        if (error) {
+          return res.send("I had a problem with playing that item. Tell my creator to check the logs.");
+        } else {
+          return res.send("Alright cool, playing that for you.");
+        }
+      });
+      // var script = 'tell application "Spotify"\n\t play track "' + '"'
     } else if (cmd === "pause") {
       var script = 'tell application "Spotify"\n\tpause\nend tell';
       applescript.execString(script, function(error, ret) {
