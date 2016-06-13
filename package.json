@@ -15,11 +15,12 @@
   "license": "MIT",
   "devDependencies": {},
   "dependencies": {
-    "spotify-web-api-node": "~2.2.0",
+    "applescript": "^1.0.0",
+    "body-parser": "~1.12.2",
     "dotenv": "~1.0.0",
     "express": "~4.12.3",
     "request": "~2.53.0",
-    "body-parser": "~1.12.2"
+    "spotify-web-api-node": "~2.2.0"
   },
   "engines": {
     "node": "0.10.x"
