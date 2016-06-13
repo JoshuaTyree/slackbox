@@ -288,10 +288,10 @@ app.post('/command', function(req, res) {
       });
     } else if (cmd === "stopyoutube") {
       var script = 'tell application "Google Chrome"\n';
-      script += '\tset windows to every tab of every window whose URL starts with "https://www.youtube.com"\n';
-	    script += '\trepeat with tabs in windows\n';
-		  script += '\t\tset tabs to tabs as any \n';
-		  script += '\t\trepeat with tabItr in tabs\n';
+      script += '\tset windowList to every tab of every window whose URL starts with "https://www.youtube.com"\n';
+	    script += '\trepeat with tabList in windowList\n';
+		  script += '\t\tset tabList to tabList as any\n';
+		  script += '\t\trepeat with tabItr in tabList\n';
 			script += '\t\t\tset tabItr to tabItr as any\n';
 			script += '\t\t\tdelete tabItr\n';
 		  script += '\t\tend repeat\n';
