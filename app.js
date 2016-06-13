@@ -286,6 +286,27 @@ app.post('/command', function(req, res) {
           return res.send("Good choice, I'm playing that for you now.");
         }
       });
+    } else if (cmd === "stoplink") {
+      var script = 'tell application "Google Chrome"\n';
+      script += '\tset windows to every tab of every window whose URL is equal to "https://www.youtube.com/watch?v=47dtFZ8CFo8"\n';
+	    script += '\trepeat with tabs in windows\n';
+		  script += '\t\tset tabs to tabs as any \n';
+		  script += '\t\trepeat with tabItr in tabs\n';
+			script += '\t\t\tset tabItr to tabItr as any\n';
+			script += '\t\t\tdelete tabItr\n';
+		  script += '\t\tend repeat\n';
+	    script += '\tend repeat\n';
+      script += 'end tell';
+      console.log(script);
+      applescript.execString(script, function(error, ret) {
+        if (error) {
+          console.log("Encountered an error while attempting to run command");
+          console.log(error);
+          return res.send("I had a problem closing that tab, you should tell my creator to check the logs for errors.");
+        } else {
+          return res.send("A shame, I liked that song.");
+        }
+      });
     }  else if (cmd === "echo") {
       // return HandleEchoCommand(req, res);
     } else if (cmd === "playlist") {
