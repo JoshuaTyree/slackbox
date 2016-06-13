@@ -264,6 +264,28 @@ app.post('/command', function(req, res) {
           return res.send("That track must have been tight. Turn up and jam it!");
         }
       });
+    } else if (cmd === "youtube") {
+      var request = req.body.text;
+      var space = request.indexOf(' ');
+      var video = null;
+
+      if (space != -1) {
+        video = request.substring(space + 1, request.length);
+      } else {
+        return res.send("For me to play a youtube video, I'll need you to tell me which one.");
+      }
+
+      var script = 'tell application "Google Chrome"\n\tactivate\n\topen location "' + video + '"\n\tdelay 1\n\tactivate\nend tell';
+      console.log(script);
+      applescript.execString(script, function(error, ret) {
+        if (error) {
+          console.log("Encountered an error while attempting to run command");
+          console.log(error);
+          return res.send("I had a problem playing that video for you, you should tell my creator to check the logs for errors.");
+        } else {
+          return res.send("Good choice, I'm playing that for you now.");
+        }
+      });
     }  else if (cmd === "echo") {
       // return HandleEchoCommand(req, res);
     } else if (cmd === "playlist") {
